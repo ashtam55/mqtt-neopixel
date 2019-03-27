@@ -1,5 +1,3 @@
-
-
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #define USE_SERIAL Serial
@@ -19,7 +17,7 @@ const char* mqtt_server = "akriya.co.in";
 WiFiClient espClient;
 PubSubClient client(espClient);
  
-int delayval = 500;
+int delayval = 5000;
 
 
 
@@ -60,14 +58,32 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println();
 
-    String q = "";
-  q = (char)payload[0];
-  q = q + (char)payload[1];
-  int num = q.toInt();
+  pinMode(2,HIGH);
+  delay(500);
+  pinMode(2,LOW);
 
-   Serial.println(num);
+  //   String q = "";
+  // q = (char)payload[0];
+  // q = q + (char)payload[1];
+  // int num = q.toInt();
+
+  //  Serial.println(num);
 
   // Switch on the LED if an 1 was received as first character
+
+
+for(int j=0;j<NUM_LEDS;j++){
+
+    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+    strip.setPixelColor(j, strip.Color(255,255,0)); // Moderately bright green color.
+
+    strip.show(); // This sends the updated pixel color to the hardware.
+
+    // delay(delayval); // Delay for a period of time (in milliseconds).
+   
+  }
+
+delay(delayval);
 
   for(int k=0;k<=NUM_LEDS;k++){
 
@@ -79,18 +95,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     // delay(delayval); // Delay for a period of time (in milliseconds).
    
   }
-  
 
-for(int j=0;j<num;j++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    strip.setPixelColor(j, strip.Color(202, 244, 244)); // Moderately bright green color.
-
-    strip.show(); // This sends the updated pixel color to the hardware.
-
-    // delay(delayval); // Delay for a period of time (in milliseconds).
-   
-  }
 }
 
 void setup() {
@@ -99,6 +104,8 @@ void setup() {
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
+  pinMode(2, OUTPUT);
+  pinMode(2,LOW);
 }
 
 void reconnect() {
@@ -110,7 +117,7 @@ void reconnect() {
       Serial.println("connected");
       // Once connected, publish an announcement...
 
-      client.subscribe("neopixel/test");
+      client.subscribe("91s/intercom");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
