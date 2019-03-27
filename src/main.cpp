@@ -10,7 +10,7 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800)
 
 // Update these with values suitable for your network.
 
-const char* ssid = "Hello Friends!!";
+const char* ssid = "91a";
 const char* password = "123456789q";
 const char* mqtt_server = "akriya.co.in";
 
@@ -69,7 +69,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   //  Serial.println(num);
 
-  // Switch on the LED if an 1 was received as first character
+
 
 
 for(int j=0;j<NUM_LEDS;j++){
@@ -106,6 +106,8 @@ void setup() {
   client.setCallback(callback);
   pinMode(2, OUTPUT);
   pinMode(2,LOW);
+    String mac = WiFi.macAddress();
+    Serial.println(mac);
 }
 
 void reconnect() {
