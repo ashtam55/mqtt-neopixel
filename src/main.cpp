@@ -7,7 +7,12 @@
 #include <ESP8266httpUpdate.h>
 
 #define USE_SERIAL Serial
+#include <Adafruit_NeoPixel.h>
 
+#define NUM_LEDS 60
+#define BRIGHTNESS 50
+#define PIN 5 
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800);
 
 // Update these with values suitable for your network.
 
@@ -17,11 +22,10 @@ const char* mqtt_server = "akriya.co.in";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
-
+ 
 int delayval = 5000;
 
 int num = 0;
-int pin = 2;
 
 void setup_wifi() {
 
@@ -44,6 +48,9 @@ void setup_wifi() {
   Serial.println(WiFi.localIP());
 
 
+  strip.setBrightness(BRIGHTNESS);
+  strip.begin();
+  strip.show();
 }
 
 
@@ -57,11 +64,43 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
 
   String TOP = topic;
+  Serial.println(TOP);
 
-if(TOP == "91s/springboardKarta-otaEnabled"){
+if (TOP == "91s/intercom"){
 
   pinMode(2,HIGH);
   delay(500);
+  pinMode(2,LOW);
+  
+for(int j=0;j<NUM_LEDS;j++){
+
+    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+    strip.setPixelColor(j, strip.Color(255,255,0)); // Moderately bright green color.
+
+    strip.show(); // This sends the updated pixel color to the hardware.
+
+    // delay(delayval); // Delay for a period of time (in milliseconds).
+   
+  }
+
+delay(delayval);
+
+  for(int k=0;k<=NUM_LEDS;k++){
+
+    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+    strip.setPixelColor(k, strip.Color(0,0,0)); // Moderately bright green color.
+
+    strip.show(); // This sends the updated pixel color to the hardware.
+
+    // delay(delayval); // Delay for a period of time (in milliseconds).
+   
+  }
+}
+
+else if(TOP == "91s/springboardKarta-otaEnabled"){
+
+  pinMode(2,HIGH);
+  delay(1000);
   pinMode(2,LOW);
 
  String q = "";
@@ -77,15 +116,15 @@ if(TOP == "91s/springboardKarta-otaEnabled"){
 }
 
 void setup() {
-
+  
   Serial.begin(115200);
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
-  pinMode(pin, OUTPUT);
-  pinMode(pin, LOW);
-  String mac = WiFi.macAddress();
-  Serial.println(mac);
+  pinMode(2, OUTPUT);
+  pinMode(2,LOW);
+    String mac = WiFi.macAddress();
+    Serial.println(mac);
 }
 
 void reconnect() {
@@ -115,13 +154,9 @@ void loop() {
   }
   client.loop();
 
-    pinMode(pin,LOW);
-    delay(1000);
-    pinMode(pin,HIGH);
-
-    if (num == 1 && WiFi.status() == WL_CONNECTED){
+if (num == 1 && WiFi.status() == WL_CONNECTED){
   Serial.println("Connected, updating");
-  t_httpUpdate_return ret = ESPhttpUpdate.update("https://ashtam55.github.io/.bin", "", "70 0B 6F 62 4F 41 EB 1A 42 3F 73 5A DA 96 98 2D 7F 2B 75 6F");
+  t_httpUpdate_return ret = ESPhttpUpdate.update("https://ashtam55.github.io/blink.ino.bin", "", "70 0B 6F 62 4F 41 EB 1A 42 3F 73 5A DA 96 98 2D 7F 2B 75 6F");
         switch(ret) {
             case HTTP_UPDATE_FAILED:
                 USE_SERIAL.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
@@ -136,4 +171,6 @@ void loop() {
                 break;
         }
 }
+
+  
 }
