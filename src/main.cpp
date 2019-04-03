@@ -17,8 +17,7 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800)
 
 // Update these with values suitable for your network.
 
-// const char* ssid = "ESP";
-// const char* password = "123456789q";
+
 const char* mqtt_server = "akriya.co.in";
 
 WiFiClient espClient;
@@ -157,7 +156,7 @@ if (num == 1 && WiFi.status() == WL_CONNECTED){
                 USE_SERIAL.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
                 break;
 
-            case HTTP_UPDATE_NO_UPDATES:
+            case HTTP_UPDATE_NO_UPDATES:  
                 USE_SERIAL.println("HTTP_UPDATE_NO_UPDATES");
                 break;
 
