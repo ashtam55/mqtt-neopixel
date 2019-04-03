@@ -1,7 +1,8 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
-#include <ESP8266WiFiMulti.h>
+#include <ESP8266WebServer.h>
+#include <WiFiManager.h>  
 
 #include <ESP8266HTTPClient.h>
 #include <ESP8266httpUpdate.h>
@@ -16,8 +17,8 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800)
 
 // Update these with values suitable for your network.
 
-const char* ssid = "ESP";
-const char* password = "123456789q";
+// const char* ssid = "ESP";
+// const char* password = "123456789q";
 const char* mqtt_server = "akriya.co.in";
 
 WiFiClient espClient;
@@ -29,15 +30,10 @@ int num = 0;
 
 void setup_wifi() {
 
-  delay(10);
-  // We start by connecting to a WiFi network
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+  WiFiManager wifiManager;
+  wifiManager.autoConnect("AutoConnectAP");
 
-  WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED) {
+    while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
@@ -46,7 +42,6 @@ void setup_wifi() {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
-
 
   strip.setBrightness(BRIGHTNESS);
   strip.begin();
