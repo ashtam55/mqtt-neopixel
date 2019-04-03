@@ -1,12 +1,5 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
-#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
-#include <WiFiManager.h>  
-
-#include <ESP8266HTTPClient.h>
-#include <ESP8266httpUpdate.h>
-
 #define USE_SERIAL Serial
 #include <Adafruit_NeoPixel.h>
 
@@ -17,7 +10,8 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800)
 
 // Update these with values suitable for your network.
 
-
+const char* ssid = "91a";
+const char* password = "123456789q";
 const char* mqtt_server = "akriya.co.in";
 
 WiFiClient espClient;
@@ -25,14 +19,19 @@ PubSubClient client(espClient);
  
 int delayval = 5000;
 
-int num = 0;
 
+git 
 void setup_wifi() {
 
-  WiFiManager wifiManager;
-  wifiManager.autoConnect("AutoConnectAP");
+  delay(10);
+  // We start by connecting to a WiFi network
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
 
-    while (WiFi.status() != WL_CONNECTED) {
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
@@ -41,6 +40,7 @@ void setup_wifi() {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+
 
   strip.setBrightness(BRIGHTNESS);
   strip.begin();
@@ -56,16 +56,22 @@ void callback(char* topic, byte* payload, unsigned int length) {
   for (unsigned int i = 0; i < length; i++) {
     Serial.print((char)payload[i]);
   }
-
-  String TOP = topic;
-  Serial.println(TOP);
-
-if (TOP == "91s/intercom"){
+  Serial.println();
 
   pinMode(2,HIGH);
   delay(500);
   pinMode(2,LOW);
-  
+
+  //   String q = "";
+  // q = (char)payload[0];
+  // q = q + (char)payload[1];
+  // int num = q.toInt();
+
+  //  Serial.println(num);
+
+
+
+
 for(int j=0;j<NUM_LEDS;j++){
 
     // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
@@ -89,23 +95,6 @@ delay(delayval);
     // delay(delayval); // Delay for a period of time (in milliseconds).
    
   }
-}
-
-else if(TOP == "91s/springboardKarta-otaEnabled"){
-
-  pinMode(2,HIGH);
-  delay(1000);
-  pinMode(2,LOW);
-
- String q = "";
-  q = (char)payload[0];
-  q = q + (char)payload[1];
-   num = q.toInt();
-
-   Serial.println(num);
-
-}
-
 
 }
 
@@ -131,7 +120,6 @@ void reconnect() {
       // Once connected, publish an announcement...
 
       client.subscribe("91s/intercom");
-      client.subscribe("91s/springboardKarta-otaEnabled");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -147,24 +135,6 @@ void loop() {
     reconnect();
   }
   client.loop();
-
-if (num == 1 && WiFi.status() == WL_CONNECTED){
-  Serial.println("Connected, updating");
-  t_httpUpdate_return ret = ESPhttpUpdate.update("https://ashtam55.github.io/blink.ino.bin", "", "70 0B 6F 62 4F 41 EB 1A 42 3F 73 5A DA 96 98 2D 7F 2B 75 6F");
-        switch(ret) {
-            case HTTP_UPDATE_FAILED:
-                USE_SERIAL.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-                break;
-
-            case HTTP_UPDATE_NO_UPDATES:  
-                USE_SERIAL.println("HTTP_UPDATE_NO_UPDATES");
-                break;
-
-            case HTTP_UPDATE_OK:
-                USE_SERIAL.println("HTTP_UPDATE_OK");
-                break;
-        }
-}
 
   
 }
