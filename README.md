@@ -1,2 +1,2 @@
-# mqtt-neopixel
-This is a simple code for operating Neopixel/Addressable LEDs using Mqtt and IDE used is PlatformIO.
+# Light Hub (Lighte-hi-Lighte)
+This branch is for operating Neopixel/Addressable LEDs using web based server.
